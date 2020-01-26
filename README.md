@@ -1,2 +1,1 @@
-# csc122
- 
+A Repository for CSC122 - Python Application Development
