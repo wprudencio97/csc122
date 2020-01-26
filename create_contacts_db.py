@@ -18,7 +18,7 @@ def main():
 
     # Create a cursor
     c = conn.cursor()
-    c.execute("DROP TABLE CONTACT")
+    c.execute("DROP TABLE IF EXISTS CONTACT")
     # Create a table
     c.execute("CREATE TABLE CONTACT (" +
               "   CONTACT_ID INTEGER PRIMARY KEY," +
