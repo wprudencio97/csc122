@@ -1,13 +1,4 @@
-import pandas as pd
-from pandas import ExcelWriter
-from pandas import ExcelFile
-
-
-df = pd.read_excel('DB_fieldDescriptions.xlsx', sheet_names='vehicleID', index_col=0)
-df.head()
-
-print(df)
-
-#for model in df.Model:
-    #print(model)
-
+import xlrd
+book = xlrd.open_workbook("vehicleData.xlsx")
+for sheet in book.sheets():
+    print(sheet.name)

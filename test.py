@@ -1,22 +1,46 @@
-# Reading an excel file using Python 
-import xlrd 
-  
-# Give the location of the file 
-loc = ("DB_fieldDescriptions.xlsx") 
-  
-wb = xlrd.open_workbook(loc) 
-sheet = wb.sheet_by_index(0) 
-  
-sheet.cell_value(0, 0) 
+import xlrd
+import sqlite3
 
-i = 0
-list=[]
-while i < sheet.nrows:
-    cell =  sheet.row_values(i)
-    list.append(cell)
-    i += 1
+  
+def main():
+    #open the workbooks
+    workBook = xlrd.open_workbook("DB_fieldDescriptions.xlsx")
+    for sheet in workBook.sheets():
+        readData(sheet)
 
-for data in list:
-    print(data[0],data[1])
+    #send file and sheet info to the readData function
+    #sheetOne = readData(excelFile = "DB_fieldDescriptions.xlsx", sheetIndex = 0) 
+    #sheetTwo = readData(excelFile = "DB_fieldDescriptions.xlsx", sheetIndex = 1)
 
-#print(list[1][1])
+    #send the list data to the createDB function
+    #createDB(sheetOne)
+    #createDB(sheetTwo)
+
+def readData(sheet):
+    sheet.cell_value(0, 0) 
+
+    longString = ""
+    for i in range(1, sheet.nrows):
+        cell =  sheet.row_values(i)
+        longString = longString + " " + str(cell[0]) + " " + str(cell[1]) + ","
+    
+    createDB(sheet.name, longString)
+
+def createDB(sheetName, longString):
+    longString = longString[:-1]
+    print(longString)
+    # Create a connection.
+    conn = sqlite3.connect('vehicle.db')
+    # Create a cursor
+    c = conn.cursor()
+    c.execute(f"DROP TABLE IF EXISTS {sheetName}")
+    # Create a table
+    c.execute(f"CREATE TABLE {sheetName}({longString})" )
+    # Save (commit) the changes
+    conn.commit()
+
+    # Close the connection.
+    conn.close()
+
+
+main()
