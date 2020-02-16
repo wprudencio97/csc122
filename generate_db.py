@@ -1,7 +1,6 @@
 import xlrd
 import sqlite3
 
-  
 def main():
     #open the field description workbook
     workBook = xlrd.open_workbook("DB_fieldDescriptions.xlsx")
@@ -45,6 +44,7 @@ def createDB(sheetName, longString):
     conn.close()
 
 def createData(sheet):
+    sheet.cell_value(0, 0) 
     #get the sheet name and change to reflect its database table
     sheetName = sheet.name
     if sheetName == "vehicleData":
@@ -52,39 +52,45 @@ def createData(sheet):
     elif sheetName == "maintenanceData":
         sheetName = "maintenanceTable" 
     
-    # Create a connection.
-    conn = sqlite3.connect('vehicle.db')
-    # Create a cursor
-    c = conn.cursor()
 
-    dataValues = sheet.row_values(0)
-    dataValuesString = ""
+    #get the name of each column
+    columnNames = getString(sheet.row_values(0))
+    columnCount = getCount(sheet.row_values(0))
 
-    for i in dataValues:
-        dataValuesString = dataValuesString + "," + i
-
-    dataValuesString = dataValuesString[1:]    
-    print(dataValuesString)
-    
     #iterate every row
     for i in range(1, sheet.nrows):
-        cell =  sheet.row_values(i)
-        cellString = ""
-        for j in cell:
-            cellString = cellString + ", " + str(j)
-        
-        cellString = cellString[1:]
+        # Create a connection.
+        conn = sqlite3.connect('vehicle.db')
+        # Create a cursor
+        c = conn.cursor()
 
-        values = cellString
-        print(values)
-        
-        c.execute(f"INSERT INTO {sheetName} VALUES({cell})")
+        # insert the values into the database
+        values = sheet.row_values(i)
+        sql = f"INSERT INTO {sheetName} ({columnNames}) VALUES ({columnCount})"
+        c.execute(sql, values)
 
-
-    #Save (commit) the changes
-    conn.commit()
-    #Close the connection.
-    conn.close()
+        #Save (commit) the changes
+        conn.commit()
+        #Close the connection.
+        conn.close()
 
 
-main()
+def getString(list):
+    stringData = ""
+    for i in list:
+        stringData = stringData + "," + str(i)
+
+    #remove the first character(,) from stringData    
+    stringData = stringData[1:]
+
+    return stringData
+
+def getCount(list):
+    stringCount = "?"
+
+    for i in range(1,len(list)):
+        stringCount = stringCount + ",?"
+
+    return stringCount
+
+main()#run the program
