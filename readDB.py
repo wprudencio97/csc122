@@ -9,10 +9,10 @@ def vehicleTable():
     for r in rows:
         print(r)
 
-def maintenenceTable():
+def maintenanceTable():
     conn = sqlite3.connect('vehicle.db')
     cur = conn.cursor()
-    cur.execute("SELECT * FROM maintenenceTable")
+    cur.execute("SELECT * FROM maintenanceTable")
     rows = cur.fetchall()
     
     for r in rows:
@@ -20,3 +20,4 @@ def maintenenceTable():
 
 
 vehicleTable()
+maintenanceTable()
