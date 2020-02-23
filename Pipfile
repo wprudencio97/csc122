@@ -9,6 +9,7 @@ pylint = "*"
 [packages]
 pandas = "*"
 xlrd = "*"
+tabulate = "*"
 
 [requires]
 python_version = "3.8"
