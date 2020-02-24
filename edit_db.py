@@ -7,7 +7,7 @@ def main():
     cur = conn.cursor()
 
     #get table selection 
-    tableSelection = int(input("\n1: Vehicle Table \n2: Maintenance Table \nEnter the number of the table to edit:"))
+    tableSelection = int(input("\n1: Vehicle Table \n2: Maintenance Table \nEnter the number of the table to edit: "))
     
     if tableSelection == 1:
         tableSelection = "vehicleTable"
@@ -39,7 +39,7 @@ def createRecord(cur, tableName):
     valueCount = getCount(rowHeaders)
 
     #get the values to input
-    valuesList = getValues(rowHeaders)
+    valuesList = getValues(0, rowHeaders)
 
     # insert the values into the database
     values = valuesList
@@ -47,6 +47,7 @@ def createRecord(cur, tableName):
     cur.execute(sql, values)
 
 def updateRecord(cur, tableName):
+    print(tableName)
     #print out the table
     printTable(cur, tableName)
     #get the ID of the record to be updated
@@ -57,18 +58,19 @@ def updateRecord(cur, tableName):
     rowHeaders = getTableHeaders(cur, tableName)
 
     for i in range(1, len(rowHeaders)):
-        updateString = updateString + "SET " + rowHeaders[i] + "=?, "
+        updateString = updateString + " " + rowHeaders[i] + "=?, "
     
 
     updateString = updateString[:-2]
     print(updateString)
 
-    dataValues = getValues(rowHeaders)
-    dataValues = getString(dataValues)
+    dataValues = getValues(1, rowHeaders)
+    #dataValues = getString(dataValues)
     
 
     #update the record with the new information
-    sqlite_update_query = f"UPDATE {tableName} {updateString} WHERE {rowHeaders[0]} = {recordID}"
+    sqlite_update_query = f"UPDATE {tableName} SET {updateString} WHERE {rowHeaders[0]} = {recordID}"
+    print(sqlite_update_query)
     data = (dataValues)
     print(data)
     cur.execute(sqlite_update_query, data)
@@ -84,14 +86,10 @@ def getTableHeaders(cur, tableName):
     #return the rowHeaders list
     return rowHeaders
 
-def getValues(list):
+def getValues(index, list):
     valueList = []
 
-    #for i in list:
-     #   i = input(f"Enter the {i}: ")
-      #  valueList.append(i)
-    
-    for i in range(1, len(list)):
+    for i in range(index, len(list)):
         i = input(f"Enter the {list[i]}: ")
         valueList.append(i)
 
