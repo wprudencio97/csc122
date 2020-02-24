@@ -21,7 +21,10 @@ def main():
         createRecord(cur, tableSelection)
     elif userAction.lower() == "r" or userAction.lower() == "read":
         printTable(cur, tableSelection)
-   
+    elif userAction.lower() == "u" or userAction.lower() == "update":
+        updateRecord(cur, tableSelection)
+
+
     #Save (commit) the changes
     conn.commit()
     # Close the connection.
@@ -43,6 +46,33 @@ def createRecord(cur, tableName):
     sql = f"INSERT INTO {tableName} ({longString}) VALUES ({valueCount})"
     cur.execute(sql, values)
 
+def updateRecord(cur, tableName):
+    #print out the table
+    printTable(cur, tableName)
+    #get the ID of the record to be updated
+    recordID = input("\nEnter the ID of the record to update: ")
+
+    updateString = ""
+
+    rowHeaders = getTableHeaders(cur, tableName)
+
+    for i in range(1, len(rowHeaders)):
+        updateString = updateString + "SET " + rowHeaders[i] + "=?, "
+    
+
+    updateString = updateString[:-2]
+    print(updateString)
+
+    dataValues = getValues(rowHeaders)
+    dataValues = getString(dataValues)
+    
+
+    #update the record with the new information
+    sqlite_update_query = f"UPDATE {tableName} {updateString} WHERE {rowHeaders[0]} = {recordID}"
+    data = (dataValues)
+    print(data)
+    cur.execute(sqlite_update_query, data)
+
 def getTableHeaders(cur, tableName):
     cur.execute(f"SELECT * FROM {tableName}")
     colnames = cur.description
@@ -57,8 +87,12 @@ def getTableHeaders(cur, tableName):
 def getValues(list):
     valueList = []
 
-    for i in list:
-        i = input(f"Enter the {i}: ")
+    #for i in list:
+     #   i = input(f"Enter the {i}: ")
+      #  valueList.append(i)
+    
+    for i in range(1, len(list)):
+        i = input(f"Enter the {list[i]}: ")
         valueList.append(i)
 
     return valueList 
